@@ -2,7 +2,7 @@ using Portal.Domain.Quotes;
 
 namespace Portal.Application.Quotes;
 
-public sealed class QuoteService
+public sealed class QuoteService : IQuoteUseCase
 {
     private readonly IQuoteRepository _quoteRepository;
 

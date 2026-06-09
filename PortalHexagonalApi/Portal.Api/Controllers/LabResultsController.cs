@@ -8,24 +8,24 @@ namespace Portal.Api.Controllers;
 [Route("api/lab-results")]
 public sealed class LabResultsController : ControllerBase
 {
-    private readonly LabResultService _labResultService;
+    private readonly ILabResultUseCase _labResultUseCase;
 
-    public LabResultsController(LabResultService labResultService)
+    public LabResultsController(ILabResultUseCase labResultUseCase)
     {
-        _labResultService = labResultService;
+        _labResultUseCase = labResultUseCase;
     }
 
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<LabResult>>> GetLabResults(CancellationToken cancellationToken)
     {
-        IReadOnlyList<LabResult> results = await _labResultService.GetLabResultsAsync(cancellationToken);
+        IReadOnlyList<LabResult> results = await _labResultUseCase.GetLabResultsAsync(cancellationToken);
         return Ok(results);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<LabResult>> GetLabResultById(string id, CancellationToken cancellationToken)
     {
-        LabResult? result = await _labResultService.GetLabResultByIdAsync(id, cancellationToken);
+        LabResult? result = await _labResultUseCase.GetLabResultByIdAsync(id, cancellationToken);
 
         if (result is null)
             return NotFound(new { message = "Lab result not found." });

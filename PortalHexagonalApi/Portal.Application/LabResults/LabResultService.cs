@@ -2,7 +2,7 @@ using Portal.Domain.LabResults;
 
 namespace Portal.Application.LabResults;
 
-public sealed class LabResultService
+public sealed class LabResultService : ILabResultUseCase
 {
     private readonly ILabResultRepository _labResultRepository;
 

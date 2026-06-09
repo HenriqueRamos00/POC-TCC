@@ -7,8 +7,8 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<QuoteService>();
-builder.Services.AddScoped<LabResultService>();
+builder.Services.AddScoped<IQuoteUseCase, QuoteService>();
+builder.Services.AddScoped<ILabResultUseCase, LabResultService>();
 
 builder.Services.AddScoped<IQuoteRepository, FakeSalesforceQuoteRepository>();
 builder.Services.AddScoped<ILabResultRepository, FakeSqlServerLabResultRepository>();
