@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Portal.Adapters.Salesforce;
+using Portal.Application.Common;
 using Portal.Application.Quotes;
 using Portal.Domain.Quotes;
 
@@ -28,7 +28,7 @@ public sealed class QuotesController : ControllerBase
         {
             return BadRequest(new { message = exception.Message });
         }
-        catch (SalesforceApiException exception)
+        catch (ExternalServiceException exception)
         {
             return StatusCode(StatusCodes.Status502BadGateway, new { message = exception.Message });
         }
@@ -51,7 +51,7 @@ public sealed class QuotesController : ControllerBase
         {
             return BadRequest(new { message = exception.Message });
         }
-        catch (SalesforceApiException exception)
+        catch (ExternalServiceException exception)
         {
             return StatusCode(StatusCodes.Status502BadGateway, new { message = exception.Message });
         }
