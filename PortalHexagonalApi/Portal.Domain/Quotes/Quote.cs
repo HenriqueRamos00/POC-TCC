@@ -2,26 +2,20 @@ namespace Portal.Domain.Quotes;
 
 public sealed class Quote
 {
-    public string Id { get; }
-    public string ProposalNumber { get; }
-    public string CustomerName { get; }
-    public string Description { get; }
-    public decimal TotalValue { get; }
+    public string Name { get; }
     public string Status { get; }
+    public string Description { get; }
+    public decimal TotalPrice { get; }
 
     public Quote(
-        string id,
-        string proposalNumber,
-        string customerName,
+        string name,
+        string status,
         string description,
-        decimal totalValue,
-        string status)
+        decimal totalPrice)
     {
-        Id = id;
-        ProposalNumber = proposalNumber;
-        CustomerName = customerName;
-        Description = description;
-        TotalValue = totalValue;
+        Name = name;
         Status = status;
+        Description = description;
+        TotalPrice = totalPrice;
     }
 }

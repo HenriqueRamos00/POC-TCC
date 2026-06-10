@@ -11,11 +11,12 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<IQuoteUseCase, QuoteService>();
 builder.Services.AddScoped<ILabResultUseCase, LabResultService>();
 
-builder.Services.AddScoped<IQuoteRepository, FakeSalesforceQuoteRepository>();
+builder.Services.AddHttpClient<IQuoteRepository, SalesforceQuoteRepository>();
 builder.Services.AddScoped<ILabResultRepository, FakeSqlServerLabResultRepository>();
 builder.Services.AddSingleton(
     builder.Configuration.GetSection(SalesforceOptions.SectionName).Get<SalesforceOptions>() ?? new SalesforceOptions());
 builder.Services.AddHttpClient<ISalesforceTokenClient, SalesforceTokenClient>();
+builder.Services.AddSingleton<ISalesforceTokenProvider, SalesforceTokenProvider>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();

@@ -5,34 +5,36 @@ namespace Portal.Adapters.Quotes;
 
 public sealed class FakeSalesforceQuoteRepository : IQuoteRepository
 {
-    private static readonly List<Quote> Quotes =
+    private static readonly List<FakeQuote> Quotes =
     [
-        new Quote(
-            id: "quote-1",
-            proposalNumber: "EAQ_2026_45482_V_1",
-            customerName: "Copel Distribuição",
-            description: "Análise físico-química de óleo isolante",
-            totalValue: 56292.30m,
-            status: "Pendente de Aceite"
+        new FakeQuote(
+            Id: "quote-1",
+            Quote: new Quote(
+                name: "EAQ_2026_45482_V_1",
+                status: "Pendente de Aceite",
+                description: "Análise físico-química de óleo isolante",
+                totalPrice: 56292.30m)
         ),
-        new Quote(
-            id: "quote-2",
-            proposalNumber: "EAQ_2026_45483_V_1",
-            customerName: "Petrobras",
-            description: "Ensaios laboratoriais de materiais",
-            totalValue: 12500.00m,
-            status: "Em Andamento"
+        new FakeQuote(
+            Id: "quote-2",
+            Quote: new Quote(
+                name: "EAQ_2026_45483_V_1",
+                status: "Em Andamento",
+                description: "Ensaios laboratoriais de materiais",
+                totalPrice: 12500.00m)
         )
     ];
 
     public Task<IReadOnlyList<Quote>> GetQuotesAsync(CancellationToken cancellationToken)
     {
-        return Task.FromResult<IReadOnlyList<Quote>>(Quotes);
+        return Task.FromResult<IReadOnlyList<Quote>>(Quotes.Select(q => q.Quote).ToList());
     }
 
     public Task<Quote?> GetQuoteByIdAsync(string id, CancellationToken cancellationToken)
     {
-        Quote? quote = Quotes.FirstOrDefault(q => q.Id == id);
+        Quote? quote = Quotes.FirstOrDefault(q => q.Id == id)?.Quote;
         return Task.FromResult(quote);
     }
+
+    private sealed record FakeQuote(string Id, Quote Quote);
 }

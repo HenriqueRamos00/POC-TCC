@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Portal.Adapters.Salesforce;
 using Portal.Application.Quotes;
 using Portal.Domain.Quotes;
 
@@ -18,14 +19,46 @@ public sealed class QuotesController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<Quote>>> GetQuotes(CancellationToken cancellationToken)
     {
-        IReadOnlyList<Quote> quotes = await _quoteUseCase.GetQuotesAsync(cancellationToken);
-        return Ok(quotes);
+        try
+        {
+            IReadOnlyList<Quote> quotes = await _quoteUseCase.GetQuotesAsync(cancellationToken);
+            return Ok(quotes);
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
+        catch (SalesforceApiException exception)
+        {
+            return StatusCode(StatusCodes.Status502BadGateway, new { message = exception.Message });
+        }
+        catch (HttpRequestException exception)
+        {
+            return StatusCode(StatusCodes.Status502BadGateway, new { message = exception.Message });
+        }
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Quote>> GetQuoteById(string id, CancellationToken cancellationToken)
     {
-        Quote? quote = await _quoteUseCase.GetQuoteByIdAsync(id, cancellationToken);
+        Quote? quote;
+
+        try
+        {
+            quote = await _quoteUseCase.GetQuoteByIdAsync(id, cancellationToken);
+        }
+        catch (InvalidOperationException exception)
+        {
+            return BadRequest(new { message = exception.Message });
+        }
+        catch (SalesforceApiException exception)
+        {
+            return StatusCode(StatusCodes.Status502BadGateway, new { message = exception.Message });
+        }
+        catch (HttpRequestException exception)
+        {
+            return StatusCode(StatusCodes.Status502BadGateway, new { message = exception.Message });
+        }
 
         if (quote is null)
             return NotFound(new { message = "Quote not found." });

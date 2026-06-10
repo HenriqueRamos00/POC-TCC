@@ -84,6 +84,7 @@ Compose.
 ```env
 Salesforce__Url=https://login.salesforce.com
 Salesforce__TokenPath=/services/oauth2/token
+Salesforce__ApiVersion=v60.0
 Salesforce__GrantType=client_credentials
 Salesforce__ClientId=your-connected-app-client-id
 Salesforce__ClientSecret=your-connected-app-client-secret
