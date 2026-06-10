@@ -40,7 +40,7 @@ dotnet build PortalHexagonalApi/PortalHexagonalApi.slnx
 Execute o projeto `Portal.Api`:
 
 ```bash
-dotnet run --project Portal.Api
+dotnet run --project PortalHexagonalApi/Portal.Api
 ```
 
 Em ambiente de desenvolvimento, a API sobe em:
@@ -71,4 +71,19 @@ curl http://localhost:5125/api/quotes
 curl http://localhost:5125/api/quotes/quote-1
 curl http://localhost:5125/api/lab-results
 curl http://localhost:5125/api/lab-results/result-1
+```
+
+## Como rodar com Docker
+
+Crie um arquivo `.env` a partir do exemplo e suba o Compose:
+
+```bash
+cp .env.example .env
+docker compose up --build
+```
+
+Por padrao, a API fica disponivel em:
+
+```text
+http://localhost:5125
 ```
