@@ -62,6 +62,7 @@ GET http://localhost:5125/api/quotes
 GET http://localhost:5125/api/quotes/{id}
 GET http://localhost:5125/api/lab-results
 GET http://localhost:5125/api/lab-results/{id}
+POST http://localhost:5125/api/salesforce/token
 ```
 
 Exemplos:
@@ -71,7 +72,25 @@ curl http://localhost:5125/api/quotes
 curl http://localhost:5125/api/quotes/quote-1
 curl http://localhost:5125/api/lab-results
 curl http://localhost:5125/api/lab-results/result-1
+curl -X POST http://localhost:5125/api/salesforce/token
 ```
+
+## Configuracao do Salesforce
+
+A API le configuracoes do Salesforce pela secao `Salesforce`, que pode vir do
+`appsettings`, de variaveis de ambiente ou do arquivo `.env` usado pelo Docker
+Compose.
+
+```env
+Salesforce__Url=https://login.salesforce.com
+Salesforce__TokenPath=/services/oauth2/token
+Salesforce__GrantType=client_credentials
+Salesforce__ClientId=your-connected-app-client-id
+Salesforce__ClientSecret=your-connected-app-client-secret
+```
+
+O endpoint `POST /api/salesforce/token` chama o OAuth do Salesforce e retorna o
+token recebido.
 
 ## Como rodar com Docker
 
