@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -11,7 +12,7 @@ namespace Portal.Adapters.Quotes;
 
 public sealed class SalesforceQuoteRepository : IQuoteRepository
 {
-    private const string QuoteFields = "Id, Name, Status, Opportunity.Account.Name, Descricao__c, TotalPrice";
+    private const string QuoteFields = "Id, Name, Status, Opportunity.StageName, Opportunity.Account.Name, Opportunity.Owner.Name, Email_proprietario_oportunidade__c, Codigo_da_Cotacao__c, Descricao__c, TotalPrice, CreatedDate";
     private const string LatestQuotesQuery = $"SELECT {QuoteFields} FROM Quote ORDER BY CreatedDate DESC LIMIT 5";
 
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
@@ -125,10 +126,27 @@ public sealed class SalesforceQuoteRepository : IQuoteRepository
     private static Quote MapQuote(SalesforceQuoteRecord record)
     {
         return new Quote(
+            id: record.Id ?? string.Empty,
+            code: record.Code ?? string.Empty,
             name: record.Name ?? string.Empty,
             status: record.Status ?? string.Empty,
+            stage: record.Opportunity?.StageName ?? string.Empty,
             description: record.Description ?? string.Empty,
-            totalPrice: record.TotalPrice ?? 0m);
+            companyName: record.Opportunity?.Account?.Name ?? string.Empty,
+            externalContactName: record.Opportunity?.Owner?.Name ?? string.Empty,
+            externalContactEmail: record.OwnerEmail ?? string.Empty,
+            totalPrice: record.TotalPrice ?? 0m,
+            createdDate: ParseSalesforceDate(record.CreatedDate));
+    }
+
+    private static DateTimeOffset? ParseSalesforceDate(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+            return null;
+
+        return DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTimeOffset parsed)
+            ? parsed
+            : null;
     }
 
     private static string EscapeSoqlString(string value)
@@ -144,16 +162,55 @@ public sealed class SalesforceQuoteRepository : IQuoteRepository
 
     private sealed class SalesforceQuoteRecord
     {
+        [JsonPropertyName("Id")]
+        public string? Id { get; set; }
+
         [JsonPropertyName("Name")]
         public string? Name { get; set; }
 
         [JsonPropertyName("Status")]
         public string? Status { get; set; }
 
+        [JsonPropertyName("Codigo_da_Cotacao__c")]
+        public string? Code { get; set; }
+
+        [JsonPropertyName("Email_proprietario_oportunidade__c")]
+        public string? OwnerEmail { get; set; }
+
         [JsonPropertyName("Descricao__c")]
         public string? Description { get; set; }
 
         [JsonPropertyName("TotalPrice")]
         public decimal? TotalPrice { get; set; }
+
+        [JsonPropertyName("CreatedDate")]
+        public string? CreatedDate { get; set; }
+
+        [JsonPropertyName("Opportunity")]
+        public SalesforceOpportunityRecord? Opportunity { get; set; }
+    }
+
+    private sealed class SalesforceOpportunityRecord
+    {
+        [JsonPropertyName("StageName")]
+        public string? StageName { get; set; }
+
+        [JsonPropertyName("Account")]
+        public SalesforceAccountRecord? Account { get; set; }
+
+        [JsonPropertyName("Owner")]
+        public SalesforceOwnerRecord? Owner { get; set; }
+    }
+
+    private sealed class SalesforceAccountRecord
+    {
+        [JsonPropertyName("Name")]
+        public string? Name { get; set; }
+    }
+
+    private sealed class SalesforceOwnerRecord
+    {
+        [JsonPropertyName("Name")]
+        public string? Name { get; set; }
     }
 }

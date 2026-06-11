@@ -6,6 +6,20 @@ using Portal.Application.Quotes;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
+const string PortalWebCorsPolicy = "PortalWeb";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(PortalWebCorsPolicy, policy =>
+        policy
+            .WithOrigins(
+                "http://localhost:4200",
+                "http://localhost",
+                "http://localhost:80")
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IQuoteUseCase, QuoteService>();
@@ -24,6 +38,8 @@ builder.Services.AddOpenApi();
 WebApplication app = builder.Build();
 
 app.MapOpenApi();
+
+app.UseCors(PortalWebCorsPolicy);
 
 app.MapControllers();
 
