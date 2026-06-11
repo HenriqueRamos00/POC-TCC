@@ -139,8 +139,6 @@ public sealed class SalesforceQuoteRepository : IQuoteRepository
             createdDate: ParseSalesforceDate(record.CreatedDate));
     }
 
-    // O Salesforce devolve datas com offset sem dois-pontos (ex.: 2026-03-13T13:16:07.000+0000),
-    // formato que o System.Text.Json (modo Web) rejeita. DateTimeOffset.TryParse é tolerante.
     private static DateTimeOffset? ParseSalesforceDate(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
